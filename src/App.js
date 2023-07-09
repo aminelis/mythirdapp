@@ -12,50 +12,46 @@ class App extends Component {
       imgSrc: '/images/Me.jpg',
       profession: 'Developer'
     },
-    show: true,
-    intervalId: null,
-    timeElapsed: 0
+    shows: false,
+    mountedTime: null
   };
 
   componentDidMount() {
-    const intervalId = setInterval(this.updateTimeElapsed, 1000);
-    this.setState({ intervalId });
+    this.setState({ mountedTime: new Date() });
+
+    // Update the component's mountedTime every second
+    this.interval = setInterval(() => {
+      this.setState({ mountedTime: new Date() });
+    }, 1000);
   }
 
   componentWillUnmount() {
-    clearInterval(this.state.intervalId);
+    clearInterval(this.interval);
   }
-
-  updateTimeElapsed = () => {
-    this.setState(prevState => ({
-      timeElapsed: prevState.timeElapsed + 1
-    }));
-  };
 
   toggleShow = () => {
     this.setState(prevState => ({
-      show: !prevState.show
+      shows: !prevState.shows
     }));
   };
 
-
   render() {
-    const { fullName, bio, imgSrc, profession } = this.state.person;
-    const { shows } = this.state;
+    const { person, shows, mountedTime } = this.state;
 
     return (
-      <div className="container">
-        <button className="btn btn-primary" onClick={this.toggleShow}>
-          Toggle Show
-        </button>
+      <div>
+        <button onClick={this.toggleShow}>Toggle Show</button>
+
         {shows && (
           <div>
-            <h1>{fullName}</h1>
-            <img src={imgSrc} alt={fullName} />
-            <p>{bio}</p>
-            <p>Profession: {profession}</p>
+            <h1>{person.fullName}</h1>
+            <p>{person.bio}</p>
+            <img src={person.imgSrc} alt="Person" />
+            <p>{person.profession}</p>
           </div>
         )}
+
+        <p>Component mounted at: {mountedTime && mountedTime.toLocaleTimeString()}</p>
       </div>
     );
   }
